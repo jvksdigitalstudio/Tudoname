@@ -1,5 +1,7 @@
 package com.tudoname.app;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -185,17 +187,20 @@ public class ResultadosActivity extends AppCompatActivity {
         AnimatorSet animOut = new AnimatorSet();
         animOut.playTogether(out, fadeOut);
         animOut.setDuration(180);
-        animOut.withEndAction(() -> {
-            displayNombre();
-            cardNombre.setTranslationX(inX);
-            cardNombre.setAlpha(0f);
-            ObjectAnimator in = ObjectAnimator.ofFloat(cardNombre, "translationX", inX, 0f);
-            ObjectAnimator fadeIn = ObjectAnimator.ofFloat(cardNombre, "alpha", 0f, 1f);
-            AnimatorSet animIn = new AnimatorSet();
-            animIn.playTogether(in, fadeIn);
-            animIn.setDuration(250);
-            animIn.setInterpolator(new OvershootInterpolator(1.2f));
-            animIn.start();
+        animOut.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                displayNombre();
+                cardNombre.setTranslationX(inX);
+                cardNombre.setAlpha(0f);
+                ObjectAnimator in = ObjectAnimator.ofFloat(cardNombre, "translationX", inX, 0f);
+                ObjectAnimator fadeIn = ObjectAnimator.ofFloat(cardNombre, "alpha", 0f, 1f);
+                AnimatorSet animIn = new AnimatorSet();
+                animIn.playTogether(in, fadeIn);
+                animIn.setDuration(250);
+                animIn.setInterpolator(new OvershootInterpolator(1.2f));
+                animIn.start();
+            }
         });
         animOut.start();
     }
