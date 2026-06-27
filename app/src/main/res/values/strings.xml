@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tudoname</string>
+    <string name="tagline">Encuentra el nombre perfecto para bebés y mascotas</string>
+    <string name="seleccionar_genero">✨ Seleccionar género ✨</string>
+    <string name="bebes">👶 Bebés</string>
+    <string name="mascotas">🐾 Mascotas</string>
+    <string name="btn_siguiente">➤ Siguiente</string>
+    <string name="btn_anterior">◀ Anterior</string>
+    <string name="btn_random">🎲</string>
+    <string name="volver">Volver</string>
+</resources>

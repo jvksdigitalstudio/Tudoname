@@ -1,0 +1,3 @@
+-keep public class com.tudoname.app.** { *; }
+-keepattributes *Annotation*
+-dontwarn okhttp3.**

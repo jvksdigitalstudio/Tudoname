@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Tudoname" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/orange_primary</item>
+        <item name="colorPrimaryVariant">@color/orange_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/gold_light</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <style name="GeneroButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:minWidth">80dp</item>
+        <item name="android:paddingVertical">10dp</item>
+        <item name="android:paddingHorizontal">16dp</item>
+        <item name="android:background">@drawable/btn_genero_selector</item>
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@drawable/text_genero_selector</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+</resources>
