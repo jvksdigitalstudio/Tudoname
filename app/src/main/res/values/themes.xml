@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Tudoname" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Tudoname" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/orange_primary</item>
         <item name="colorPrimaryVariant">@color/orange_dark</item>
         <item name="colorOnPrimary">@color/white</item>
