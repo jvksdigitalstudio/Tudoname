@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:text="Tudoname"
             android:textSize="68sp"
-            android:fontFamily="@font/fredoka_one"
+            android:fontFamily="sans-serif-condensed"
             android:textColor="#FFE566"
             android:shadowColor="#AA000000"
             android:shadowDx="0"
@@ -95,7 +95,7 @@
                     android:layout_height="wrap_content"
                     android:text="✨ Seleccionar género ✨"
                     android:textSize="19sp"
-                    android:fontFamily="@font/fredoka_one"
+                    android:fontFamily="sans-serif-condensed"
                     android:textColor="#CC5500"
                     android:gravity="center" />
 
@@ -107,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:text="👶 Bebés"
                     android:textSize="20sp"
-                    android:fontFamily="@font/fredoka_one"
+                    android:fontFamily="sans-serif-condensed"
                     android:textColor="#0077BB"
                     android:gravity="center" />
 
@@ -142,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:text="🐾 Mascotas"
                     android:textSize="20sp"
-                    android:fontFamily="@font/fredoka_one"
+                    android:fontFamily="sans-serif-condensed"
                     android:textColor="#0077BB"
                     android:gravity="center" />
 
@@ -191,7 +191,7 @@
                     android:layout_height="52dp"
                     android:text="➤  Siguiente"
                     android:textSize="18sp"
-                    android:fontFamily="@font/fredoka_one"
+                    android:fontFamily="sans-serif-condensed"
                     android:textColor="#FFFFFF"
                     android:background="@drawable/btn_gradient"
                     android:stateListAnimator="@null" />
