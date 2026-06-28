@@ -54,16 +54,15 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
         <!--
-            HOJA: 75% ancho pantalla x 370dp alto
+            HOJA: 70% ancho pantalla (reducida un poco para no tapar caras)
             Centro vertical en 53% de la pantalla
-            Medido exactamente del cuadrado verde del usuario
         -->
         <FrameLayout
             android:id="@+id/cardContent"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:elevation="12dp"
-            app:layout_constraintWidth_percent="0.78"
+            app:layout_constraintWidth_percent="0.70"
             app:layout_constraintDimensionRatio="900:1008"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -92,7 +91,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="✨ Seleccionar género ✨"
-                    android:textSize="17sp"
+                    android:textSize="19sp"
                     android:fontFamily="sans-serif-condensed"
                     android:textStyle="bold"
                     android:textColor="#CC5500"
@@ -103,7 +102,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="👶 Bebés"
-                    android:textSize="15sp"
+                    android:textSize="17sp"
                     android:fontFamily="sans-serif-condensed"
                     android:textStyle="bold"
                     android:textColor="#0077BB"
@@ -135,7 +134,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="🐾 Mascotas"
-                    android:textSize="15sp"
+                    android:textSize="17sp"
                     android:fontFamily="sans-serif-condensed"
                     android:textStyle="bold"
                     android:textColor="#0077BB"
@@ -177,10 +176,10 @@
                 <!-- Botón Siguiente -->
                 <Button
                     android:id="@+id/btnSiguiente"
-                    android:layout_width="210dp"
-                    android:layout_height="46dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
                     android:text="➤  Siguiente"
-                    android:textSize="15sp"
+                    android:textSize="17sp"
                     android:fontFamily="sans-serif-condensed"
                     android:textStyle="bold"
                     android:textColor="#FFFFFF"

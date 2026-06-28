@@ -8,6 +8,7 @@ import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
@@ -58,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
         btnSiguiente = findViewById(R.id.btnSiguiente);
 
         // Pivot en el pin (top center) — igual que transform-origin: top center
-        cardContent.post(() -> {
+        // ViewTreeObserver garantiza que width/height ya están medidos
+        cardContent.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             cardContent.setPivotX(cardContent.getWidth() / 2f);
             cardContent.setPivotY(0f);
         });
@@ -140,8 +142,14 @@ public class MainActivity extends AppCompatActivity {
     /**
      * hojaFlotando: replica exacta del CSS de la web
      * 0→0.8°→-0.5°→0.6°→-0.4°→0° | 5000ms infinito
+     * pivot = top center (como transform-origin: top center)
      */
     private void startHojaFlotando() {
+        // Asegurar pivot correcto antes de animar
+        cardContent.setPivotX(cardContent.getWidth() / 2f);
+        cardContent.setPivotY(0f);
+
+        // Rotación: replica keyframes del CSS hojaFlotando
         swingRotation = ObjectAnimator.ofFloat(
             cardContent, "rotation",
             0f, 0.8f, -0.5f, 0.6f, -0.4f, 0f
@@ -151,18 +159,20 @@ public class MainActivity extends AppCompatActivity {
         swingRotation.setRepeatMode(ValueAnimator.RESTART);
         swingRotation.setInterpolator(new AccelerateDecelerateInterpolator());
 
+        // TranslationY: leve flotado vertical acompañando el balanceo
         swingTranslation = ObjectAnimator.ofFloat(
             cardContent, "translationY",
-            0f, 3f, 1.5f, 3f, 0f, 0f
+            0f, 2f, 1f, 2f, 0f, 0f
         );
         swingTranslation.setDuration(5000);
         swingTranslation.setRepeatCount(ValueAnimator.INFINITE);
         swingTranslation.setRepeatMode(ValueAnimator.RESTART);
         swingTranslation.setInterpolator(new AccelerateDecelerateInterpolator());
 
+        // Elevación oscilante (simula hojaSombra del CSS)
         ObjectAnimator shadowAnim = ObjectAnimator.ofFloat(
             cardContent, "elevation",
-            12f, 18f, 10f, 16f, 11f, 12f
+            12f, 20f, 10f, 18f, 11f, 12f
         );
         shadowAnim.setDuration(5000);
         shadowAnim.setRepeatCount(ValueAnimator.INFINITE);
