@@ -8,7 +8,6 @@ import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
@@ -30,8 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvTitle, tvTagline;
     private Button btnSiguiente;
 
-    private ObjectAnimator swingRotation;
-    private ObjectAnimator swingTranslation;
+    private AnimatorSet floatSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +43,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         initViews();
-        startEntranceAnimations();
         setupRadioGroups();
         setupButton();
+
+        // Esperar a que el layout esté completamente medido antes de animar
+        cardContent.post(() -> {
+            // Pivot en el pin superior-centro (como transform-origin: top center en CSS)
+            cardContent.setPivotX(cardContent.getWidth() / 2f);
+            cardContent.setPivotY(0f);
+            startEntranceAnimations();
+        });
     }
 
     private void initViews() {
@@ -58,18 +63,15 @@ public class MainActivity extends AppCompatActivity {
         rgMascotas   = findViewById(R.id.rgMascotas);
         btnSiguiente = findViewById(R.id.btnSiguiente);
 
-        // Pivot en el pin (top center) — igual que transform-origin: top center
-        // ViewTreeObserver garantiza que width/height ya están medidos
-        cardContent.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            cardContent.setPivotX(cardContent.getWidth() / 2f);
-            cardContent.setPivotY(0f);
-        });
+        // Ocultar todo inicialmente
+        cardContent.setAlpha(0f);
+        tvTitle.setAlpha(0f);
+        tvTagline.setAlpha(0f);
     }
 
     private void startEntranceAnimations() {
 
-        // ── 1. TÍTULO: popIn — scale(0.7) + translateY(-20) → normal ──
-        tvTitle.setAlpha(0f);
+        // ── 1. TÍTULO: popIn rebotado ──
         tvTitle.setScaleX(0.7f);
         tvTitle.setScaleY(0.7f);
         tvTitle.setTranslationY(-20f);
@@ -90,8 +92,7 @@ public class MainActivity extends AppCompatActivity {
         });
         titleAnim.start();
 
-        // ── 2. TAGLINE: fadeUp — delay 500ms ──
-        tvTagline.setAlpha(0f);
+        // ── 2. TAGLINE: fadeUp delay 500ms ──
         tvTagline.setTranslationY(24f);
         tvTagline.animate()
             .alpha(1f).translationY(0f)
@@ -100,9 +101,8 @@ public class MainActivity extends AppCompatActivity {
             .setInterpolator(new DecelerateInterpolator(1.5f))
             .start();
 
-        // ── 3. HOJA: hojaEntrada ──
-        cardContent.setAlpha(0f);
-        cardContent.setTranslationY(-30f);
+        // ── 3. HOJA: entra desde arriba con rotación y rebote ──
+        cardContent.setTranslationY(-40f);
         cardContent.setRotation(-6f);
         cardContent.setScaleX(0.92f);
         cardContent.setScaleY(0.92f);
@@ -110,18 +110,21 @@ public class MainActivity extends AppCompatActivity {
         AnimatorSet hojaEntrada = new AnimatorSet();
         hojaEntrada.playTogether(
             ObjectAnimator.ofFloat(cardContent, "alpha", 0f, 1f),
-            ObjectAnimator.ofFloat(cardContent, "translationY", -30f, 0f),
+            ObjectAnimator.ofFloat(cardContent, "translationY", -40f, 0f),
             ObjectAnimator.ofFloat(cardContent, "rotation", -6f, 0f),
             ObjectAnimator.ofFloat(cardContent, "scaleX", 0.92f, 1f),
             ObjectAnimator.ofFloat(cardContent, "scaleY", 0.92f, 1f)
         );
-        hojaEntrada.setDuration(700);
+        hojaEntrada.setDuration(750);
         hojaEntrada.setStartDelay(200);
         hojaEntrada.setInterpolator(new OvershootInterpolator(1.4f));
         hojaEntrada.addListener(new AnimatorListenerAdapter() {
             @Override public void onAnimationEnd(Animator animation) {
+                // Recalcular pivot después de la entrada (el tamaño ya es definitivo)
+                cardContent.setPivotX(cardContent.getWidth() / 2f);
+                cardContent.setPivotY(0f);
                 startHojaFlotando();
-                startBtnGradMove();
+                startBtnPulse();
             }
         });
         hojaEntrada.start();
@@ -131,7 +134,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startTitleShimmer() {
-        ObjectAnimator shimmer = ObjectAnimator.ofFloat(tvTitle, "alpha", 1f, 0.85f, 1f);
+        // Pulso sutil de opacidad que simula el shimmer del logo
+        ObjectAnimator shimmer = ObjectAnimator.ofFloat(tvTitle, "alpha", 1f, 0.82f, 1f);
         shimmer.setDuration(2800);
         shimmer.setRepeatCount(ValueAnimator.INFINITE);
         shimmer.setRepeatMode(ValueAnimator.RESTART);
@@ -140,85 +144,75 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * hojaFlotando: replica exacta del CSS de la web
-     * 0→0.8°→-0.5°→0.6°→-0.4°→0° | 5000ms infinito
-     * pivot = top center (como transform-origin: top center)
+     * Balanceo continuo del papel colgado de un chinche.
+     * Replica exacta del CSS:
+     *   0%→rotate(0)  20%→rotate(0.8deg)  40%→rotate(-0.5deg)
+     *   60%→rotate(0.6deg)  80%→rotate(-0.4deg)  100%→rotate(0)
+     * pivot = top center  →  setPivotY(0)
      */
     private void startHojaFlotando() {
-        // Asegurar pivot correcto antes de animar
-        cardContent.setPivotX(cardContent.getWidth() / 2f);
-        cardContent.setPivotY(0f);
-
-        // Rotación: replica keyframes del CSS hojaFlotando
-        swingRotation = ObjectAnimator.ofFloat(
+        // Rotación: balanceo de papel colgado
+        ObjectAnimator swingRot = ObjectAnimator.ofFloat(
             cardContent, "rotation",
-            0f, 0.8f, -0.5f, 0.6f, -0.4f, 0f
+            0f, 0.9f, -0.6f, 0.7f, -0.45f, 0f
         );
-        swingRotation.setDuration(5000);
-        swingRotation.setRepeatCount(ValueAnimator.INFINITE);
-        swingRotation.setRepeatMode(ValueAnimator.RESTART);
-        swingRotation.setInterpolator(new AccelerateDecelerateInterpolator());
+        swingRot.setDuration(5000);
+        swingRot.setRepeatCount(ValueAnimator.INFINITE);
+        swingRot.setRepeatMode(ValueAnimator.RESTART);
+        swingRot.setInterpolator(new AccelerateDecelerateInterpolator());
 
-        // TranslationY: leve flotado vertical acompañando el balanceo
-        swingTranslation = ObjectAnimator.ofFloat(
+        // Flotado vertical leve que acompaña el balanceo
+        ObjectAnimator swingY = ObjectAnimator.ofFloat(
             cardContent, "translationY",
-            0f, 2f, 1f, 2f, 0f, 0f
+            0f, 2.5f, 1f, 2f, 0.5f, 0f
         );
-        swingTranslation.setDuration(5000);
-        swingTranslation.setRepeatCount(ValueAnimator.INFINITE);
-        swingTranslation.setRepeatMode(ValueAnimator.RESTART);
-        swingTranslation.setInterpolator(new AccelerateDecelerateInterpolator());
+        swingY.setDuration(5000);
+        swingY.setRepeatCount(ValueAnimator.INFINITE);
+        swingY.setRepeatMode(ValueAnimator.RESTART);
+        swingY.setInterpolator(new AccelerateDecelerateInterpolator());
 
-        // Elevación oscilante (simula hojaSombra del CSS)
-        ObjectAnimator shadowAnim = ObjectAnimator.ofFloat(
+        // Sombra oscilante (simula hojaSombra del CSS)
+        ObjectAnimator swingElev = ObjectAnimator.ofFloat(
             cardContent, "elevation",
-            12f, 20f, 10f, 18f, 11f, 12f
+            12f, 22f, 10f, 20f, 11f, 12f
         );
-        shadowAnim.setDuration(5000);
-        shadowAnim.setRepeatCount(ValueAnimator.INFINITE);
-        shadowAnim.setRepeatMode(ValueAnimator.RESTART);
-        shadowAnim.setInterpolator(new AccelerateDecelerateInterpolator());
+        swingElev.setDuration(5000);
+        swingElev.setRepeatCount(ValueAnimator.INFINITE);
+        swingElev.setRepeatMode(ValueAnimator.RESTART);
+        swingElev.setInterpolator(new AccelerateDecelerateInterpolator());
 
-        AnimatorSet floatSet = new AnimatorSet();
-        floatSet.playTogether(swingRotation, swingTranslation, shadowAnim);
+        floatSet = new AnimatorSet();
+        floatSet.playTogether(swingRot, swingY, swingElev);
         floatSet.start();
     }
 
-    private void startBtnGradMove() {
-        ObjectAnimator btnPulse = ObjectAnimator.ofFloat(btnSiguiente, "scaleX", 1f, 1.02f, 1f);
-        btnPulse.setDuration(3000);
-        btnPulse.setRepeatCount(ValueAnimator.INFINITE);
-        btnPulse.setRepeatMode(ValueAnimator.RESTART);
-        btnPulse.setInterpolator(new AccelerateDecelerateInterpolator());
-
-        ObjectAnimator btnPulseY = ObjectAnimator.ofFloat(btnSiguiente, "scaleY", 1f, 1.02f, 1f);
-        btnPulseY.setDuration(3000);
-        btnPulseY.setRepeatCount(ValueAnimator.INFINITE);
-        btnPulseY.setRepeatMode(ValueAnimator.RESTART);
-        btnPulseY.setInterpolator(new AccelerateDecelerateInterpolator());
-
-        ObjectAnimator btnGlow = ObjectAnimator.ofFloat(btnSiguiente, "elevation", 8f, 16f, 8f);
-        btnGlow.setDuration(3000);
-        btnGlow.setRepeatCount(ValueAnimator.INFINITE);
-        btnGlow.setRepeatMode(ValueAnimator.RESTART);
-        btnGlow.setInterpolator(new AccelerateDecelerateInterpolator());
-
+    private void startBtnPulse() {
+        // Pulso suave del botón: escala y elevación
+        ObjectAnimator px = ObjectAnimator.ofFloat(btnSiguiente, "scaleX", 1f, 1.03f, 1f);
+        ObjectAnimator py = ObjectAnimator.ofFloat(btnSiguiente, "scaleY", 1f, 1.03f, 1f);
+        ObjectAnimator pe = ObjectAnimator.ofFloat(btnSiguiente, "elevation", 6f, 16f, 6f);
+        for (ObjectAnimator a : new ObjectAnimator[]{px, py, pe}) {
+            a.setDuration(2800);
+            a.setRepeatCount(ValueAnimator.INFINITE);
+            a.setRepeatMode(ValueAnimator.RESTART);
+            a.setInterpolator(new AccelerateDecelerateInterpolator());
+        }
         AnimatorSet btnSet = new AnimatorSet();
-        btnSet.playTogether(btnPulse, btnPulseY, btnGlow);
+        btnSet.playTogether(px, py, pe);
         btnSet.start();
     }
 
     private void animateFadeUpChildren() {
         int[] ids = { R.id.rgBebes, R.id.rgMascotas, R.id.btnSiguiente };
-        int[] delays = { 600, 700, 800 };
+        int[] delays = { 650, 780, 900 };
         for (int i = 0; i < ids.length; i++) {
             View v = findViewById(ids[i]);
             if (v == null) continue;
             v.setAlpha(0f);
-            v.setTranslationY(24f);
+            v.setTranslationY(28f);
             v.animate()
                 .alpha(1f).translationY(0f)
-                .setDuration(500)
+                .setDuration(520)
                 .setStartDelay(delays[i])
                 .setInterpolator(new DecelerateInterpolator(1.5f))
                 .start();
@@ -243,19 +237,19 @@ public class MainActivity extends AppCompatActivity {
     private void animateSelected(View v) {
         if (v == null) return;
         v.animate()
-            .translationY(-4f)
-            .scaleX(1.06f)
-            .scaleY(1.06f)
+            .translationY(-5f)
+            .scaleX(1.08f)
+            .scaleY(1.08f)
             .setDuration(220)
-            .setInterpolator(new OvershootInterpolator(1.4f))
+            .setInterpolator(new OvershootInterpolator(1.6f))
             .start();
     }
 
     private void setupButton() {
         btnSiguiente.setOnClickListener(v -> {
-            v.animate().scaleX(0.97f).scaleY(0.97f).setDuration(80)
+            v.animate().scaleX(0.96f).scaleY(0.96f).setDuration(80)
                 .withEndAction(() ->
-                    v.animate().scaleX(1f).scaleY(1f).setDuration(200)
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(220)
                         .setInterpolator(new OvershootInterpolator(2f))
                         .withEndAction(this::goToResultados)
                         .start()
@@ -269,9 +263,9 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Por favor selecciona una opción ✨", Toast.LENGTH_SHORT).show();
             ObjectAnimator shaker = ObjectAnimator.ofFloat(
                 cardContent, "translationX",
-                0f, -14f, 14f, -10f, 10f, -6f, 6f, -3f, 3f, 0f
+                0f, -16f, 16f, -12f, 12f, -7f, 7f, -3f, 3f, 0f
             );
-            shaker.setDuration(500);
+            shaker.setDuration(520);
             shaker.setInterpolator(new DecelerateInterpolator());
             shaker.start();
             return;
@@ -293,7 +287,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (swingRotation != null) swingRotation.cancel();
-        if (swingTranslation != null) swingTranslation.cancel();
+        if (floatSet != null) floatSet.cancel();
     }
 }

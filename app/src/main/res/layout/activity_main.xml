@@ -53,10 +53,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!--
-            HOJA: 70% ancho pantalla (reducida un poco para no tapar caras)
-            Centro vertical en 53% de la pantalla
-        -->
+        <!-- HOJA: 70% ancho -->
         <FrameLayout
             android:id="@+id/cardContent"
             android:layout_width="0dp"
@@ -77,50 +74,70 @@
                 android:scaleType="fitXY"
                 android:contentDescription="@null" />
 
+            <!-- LinearLayout que usa layout_weight para distribuir todo el alto -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center_horizontal"
-                android:paddingTop="30dp"
-                android:paddingBottom="18dp"
-                android:paddingHorizontal="20dp">
+                android:paddingTop="36dp"
+                android:paddingBottom="28dp"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp">
+
+                <!-- ESPACIO arriba flexible -->
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
 
                 <!-- "Seleccionar género" -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="✨ Seleccionar género ✨"
-                    android:textSize="19sp"
+                    android:textSize="20sp"
                     android:fontFamily="sans-serif-condensed"
                     android:textStyle="bold"
                     android:textColor="#CC5500"
-                    android:layout_marginBottom="8dp" />
+                    android:gravity="center" />
 
-                <!-- Bebés -->
+                <!-- ESPACIO flexible -->
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <!-- Bebés label -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="👶 Bebés"
-                    android:textSize="17sp"
+                    android:textSize="19sp"
                     android:fontFamily="sans-serif-condensed"
                     android:textStyle="bold"
                     android:textColor="#0077BB"
-                    android:layout_marginBottom="8dp" />
+                    android:gravity="center" />
 
+                <!-- ESPACIO flexible -->
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <!-- Bebés botones -->
                 <RadioGroup
                     android:id="@+id/rgBebes"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginBottom="12dp">
+                    android:gravity="center">
 
                     <RadioButton
                         android:id="@+id/rbNino"
                         style="@style/GeneroButton"
                         android:text="Niño"
-                        android:layout_marginEnd="10dp" />
+                        android:layout_marginEnd="14dp" />
 
                     <RadioButton
                         android:id="@+id/rbNina"
@@ -129,42 +146,54 @@
 
                 </RadioGroup>
 
-                <!-- Mascotas -->
+                <!-- ESPACIO flexible -->
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <!-- Mascotas label -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="🐾 Mascotas"
-                    android:textSize="17sp"
+                    android:textSize="19sp"
                     android:fontFamily="sans-serif-condensed"
                     android:textStyle="bold"
                     android:textColor="#0077BB"
-                    android:layout_marginBottom="8dp" />
+                    android:gravity="center" />
 
+                <!-- ESPACIO flexible -->
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <!-- Mascotas botones -->
                 <RadioGroup
                     android:id="@+id/rgMascotas"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginBottom="0dp">
+                    android:gravity="center">
 
                     <RadioButton
                         android:id="@+id/rbPerro"
                         style="@style/GeneroButton"
                         android:text="Perro"
-                        android:layout_marginEnd="6dp" />
+                        android:layout_marginEnd="8dp" />
 
                     <RadioButton
                         android:id="@+id/rbPerra"
                         style="@style/GeneroButton"
                         android:text="Perra"
-                        android:layout_marginEnd="6dp" />
+                        android:layout_marginEnd="8dp" />
 
                     <RadioButton
                         android:id="@+id/rbGato"
                         style="@style/GeneroButton"
                         android:text="Gato"
-                        android:layout_marginEnd="6dp" />
+                        android:layout_marginEnd="8dp" />
 
                     <RadioButton
                         android:id="@+id/rbGata"
@@ -173,37 +202,47 @@
 
                 </RadioGroup>
 
-                <!-- Botón Siguiente -->
+                <!-- ESPACIO flexible (doble para dar más aire antes del botón) -->
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="2" />
+
+                <!-- Botón Siguiente: ancho completo -->
                 <Button
                     android:id="@+id/btnSiguiente"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="52dp"
                     android:text="➤  Siguiente"
-                    android:textSize="17sp"
+                    android:textSize="18sp"
                     android:fontFamily="sans-serif-condensed"
                     android:textStyle="bold"
                     android:textColor="#FFFFFF"
                     android:background="@drawable/btn_gradient"
-                    android:stateListAnimator="@null"
-                    android:layout_marginTop="14dp" />
+                    android:stateListAnimator="@null" />
+
+                <!-- ESPACIO flexible -->
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
 
                 <!-- Dots + PASO -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginTop="10dp">
+                    android:gravity="center">
 
                     <View
-                        android:layout_width="22dp"
-                        android:layout_height="6dp"
+                        android:layout_width="24dp"
+                        android:layout_height="7dp"
                         android:background="@drawable/dot_active"
-                        android:layout_marginEnd="5dp" />
+                        android:layout_marginEnd="6dp" />
 
                     <View
-                        android:layout_width="6dp"
-                        android:layout_height="6dp"
+                        android:layout_width="7dp"
+                        android:layout_height="7dp"
                         android:background="@drawable/dot_inactive" />
 
                 </LinearLayout>
@@ -212,10 +251,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="PASO 1 DE 2"
-                    android:textSize="9sp"
+                    android:textSize="10sp"
                     android:textColor="#888888"
-                    android:letterSpacing="0.12"
-                    android:layout_marginTop="3dp" />
+                    android:letterSpacing="0.15"
+                    android:layout_marginTop="4dp" />
+
+                <!-- ESPACIO abajo flexible -->
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
 
             </LinearLayout>
         </FrameLayout>
