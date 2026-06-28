@@ -3,12 +3,9 @@ package com.tudoname.app;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
-import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -34,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ObjectAnimator swingRotation;
     private ObjectAnimator swingTranslation;
-    private ValueAnimator btnGradAnim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,18 +80,15 @@ public class MainActivity extends AppCompatActivity {
             ObjectAnimator.ofFloat(tvTitle, "translationY", -20f, 0f)
         );
         titleAnim.setDuration(600);
-        // cubic-bezier(0.34,1.56,0.64,1) → OvershootInterpolator
         titleAnim.setInterpolator(new OvershootInterpolator(1.6f));
-        titleAnim.start();
-
-        // Shimmer continuo en el título (simula shimmerLogo)
         titleAnim.addListener(new AnimatorListenerAdapter() {
             @Override public void onAnimationEnd(Animator a) {
                 startTitleShimmer();
             }
         });
+        titleAnim.start();
 
-        // ── 2. TAGLINE: fadeUp — translateY(24) → 0, delay 500ms ──
+        // ── 2. TAGLINE: fadeUp — delay 500ms ──
         tvTagline.setAlpha(0f);
         tvTagline.setTranslationY(24f);
         tvTagline.animate()
@@ -105,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
             .setInterpolator(new DecelerateInterpolator(1.5f))
             .start();
 
-        // ── 3. HOJA: hojaEntrada — rotate(-6°) + translateY(-30) + scale(0.92) → normal ──
+        // ── 3. HOJA: hojaEntrada ──
         cardContent.setAlpha(0f);
         cardContent.setTranslationY(-30f);
         cardContent.setRotation(-6f);
@@ -122,25 +115,19 @@ public class MainActivity extends AppCompatActivity {
         );
         hojaEntrada.setDuration(700);
         hojaEntrada.setStartDelay(200);
-        // cubic-bezier(0.34,1.4,0.64,1) → OvershootInterpolator suave
         hojaEntrada.setInterpolator(new OvershootInterpolator(1.4f));
         hojaEntrada.addListener(new AnimatorListenerAdapter() {
             @Override public void onAnimationEnd(Animator animation) {
-                // Inicia balanceo y animación del botón después de la entrada
                 startHojaFlotando();
                 startBtnGradMove();
             }
         });
         hojaEntrada.start();
 
-        // ── 4. CONTENIDO INTERNO: fadeUp escalonado (delay 400ms y 500ms) ──
+        // ── 4. Contenido interno: fadeUp escalonado ──
         animateFadeUpChildren();
     }
 
-    /**
-     * Shimmer suave en el título — simula shimmerLogo
-     * (pulso de escala muy leve, 2.8s infinito)
-     */
     private void startTitleShimmer() {
         ObjectAnimator shimmer = ObjectAnimator.ofFloat(tvTitle, "alpha", 1f, 0.85f, 1f);
         shimmer.setDuration(2800);
@@ -151,10 +138,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * hojaFlotando: balanceo exacto de la web
-     * 0%→20%→40%→60%→80%→100%
-     * rotate(0→0.8→-0.5→0.6→-0.4→0) translateY(0→1→0.5→1→0→0)
-     * Duración 5000ms, infinito, ease-in-out
+     * hojaFlotando: replica exacta del CSS de la web
+     * 0→0.8°→-0.5°→0.6°→-0.4°→0° | 5000ms infinito
      */
     private void startHojaFlotando() {
         swingRotation = ObjectAnimator.ofFloat(
@@ -175,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
         swingTranslation.setRepeatMode(ValueAnimator.RESTART);
         swingTranslation.setInterpolator(new AccelerateDecelerateInterpolator());
 
-        // Sombra oscilante via elevation
         ObjectAnimator shadowAnim = ObjectAnimator.ofFloat(
             cardContent, "elevation",
             12f, 18f, 10f, 16f, 11f, 12f
@@ -190,60 +174,42 @@ public class MainActivity extends AppCompatActivity {
         floatSet.start();
     }
 
-    /**
-     * gradMove: gradiente animado del botón Siguiente
-     * 0%→50%→100% background-position shift
-     * Simulado con alpha pulsante suave en Android
-     */
     private void startBtnGradMove() {
-        // Pulso suave de escala en el botón — simula gradMove
-        ObjectAnimator btnPulse = ObjectAnimator.ofFloat(
-            btnSiguiente, "scaleX", 1f, 1.02f, 1f
-        );
+        ObjectAnimator btnPulse = ObjectAnimator.ofFloat(btnSiguiente, "scaleX", 1f, 1.02f, 1f);
         btnPulse.setDuration(3000);
         btnPulse.setRepeatCount(ValueAnimator.INFINITE);
         btnPulse.setRepeatMode(ValueAnimator.RESTART);
         btnPulse.setInterpolator(new AccelerateDecelerateInterpolator());
 
-        ObjectAnimator btnPulseY = ObjectAnimator.ofFloat(
-            btnSiguiente, "scaleY", 1f, 1.02f, 1f
-        );
+        ObjectAnimator btnPulseY = ObjectAnimator.ofFloat(btnSiguiente, "scaleY", 1f, 1.02f, 1f);
         btnPulseY.setDuration(3000);
         btnPulseY.setRepeatCount(ValueAnimator.INFINITE);
         btnPulseY.setRepeatMode(ValueAnimator.RESTART);
         btnPulseY.setInterpolator(new AccelerateDecelerateInterpolator());
 
-        // Glow pulsante via elevation
-        ObjectAnimator btnGlow = ObjectAnimator.ofFloat(
-            btnSiguiente, "elevation", 8f, 16f, 8f
-        );
+        ObjectAnimator btnGlow = ObjectAnimator.ofFloat(btnSiguiente, "elevation", 8f, 16f, 8f);
         btnGlow.setDuration(3000);
         btnGlow.setRepeatCount(ValueAnimator.INFINITE);
         btnGlow.setRepeatMode(ValueAnimator.RESTART);
         btnGlow.setInterpolator(new AccelerateDecelerateInterpolator());
 
-        new AnimatorSet() {{ playTogether(btnPulse, btnPulseY, btnGlow); start(); }};
+        AnimatorSet btnSet = new AnimatorSet();
+        btnSet.playTogether(btnPulse, btnPulseY, btnGlow);
+        btnSet.start();
     }
 
-    /**
-     * fadeUp escalonado para el contenido interno de la hoja
-     * Delay 400ms y 500ms según la web
-     */
     private void animateFadeUpChildren() {
-        // Los RadioGroups y el botón hacen fadeUp
         int[] ids = { R.id.rgBebes, R.id.rgMascotas, R.id.btnSiguiente };
         int[] delays = { 600, 700, 800 };
-
         for (int i = 0; i < ids.length; i++) {
             View v = findViewById(ids[i]);
             if (v == null) continue;
             v.setAlpha(0f);
             v.setTranslationY(24f);
-            int delay = delays[i];
             v.animate()
                 .alpha(1f).translationY(0f)
                 .setDuration(500)
-                .setStartDelay(delay)
+                .setStartDelay(delays[i])
                 .setInterpolator(new DecelerateInterpolator(1.5f))
                 .start();
         }
@@ -264,10 +230,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Al seleccionar un botón: translateY(-2) + scale(1.06)
-     * Igual que .option input:checked + label en la web
-     */
     private void animateSelected(View v) {
         if (v == null) return;
         v.animate()
@@ -281,10 +243,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupButton() {
         btnSiguiente.setOnClickListener(v -> {
-            // :active → scale(0.97)
             v.animate().scaleX(0.97f).scaleY(0.97f).setDuration(80)
                 .withEndAction(() ->
-                    // :hover → scale(1.03) con overshoot
                     v.animate().scaleX(1f).scaleY(1f).setDuration(200)
                         .setInterpolator(new OvershootInterpolator(2f))
                         .withEndAction(this::goToResultados)
@@ -297,7 +257,6 @@ public class MainActivity extends AppCompatActivity {
         String tipo = getSeleccion();
         if (tipo == null) {
             Toast.makeText(this, "Por favor selecciona una opción ✨", Toast.LENGTH_SHORT).show();
-            // Shake — igual que cuando falta selección
             ObjectAnimator shaker = ObjectAnimator.ofFloat(
                 cardContent, "translationX",
                 0f, -14f, 14f, -10f, 10f, -6f, 6f, -3f, 3f, 0f
@@ -326,6 +285,5 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         if (swingRotation != null) swingRotation.cancel();
         if (swingTranslation != null) swingTranslation.cancel();
-        if (btnGradAnim != null) btnGradAnim.cancel();
     }
 }
