@@ -18,21 +18,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- TÍTULO -->
+        <!-- TÍTULO — Fredoka One, grande, con sombra dorada -->
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tudoname"
-            android:textSize="52sp"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-condensed"
+            android:textSize="68sp"
+            android:fontFamily="@font/fredoka_one"
             android:textColor="#FFE566"
-            android:shadowColor="#CC000000"
-            android:shadowDx="2"
-            android:shadowDy="4"
-            android:shadowRadius="14"
-            android:layout_marginTop="28dp"
+            android:shadowColor="#AA000000"
+            android:shadowDx="0"
+            android:shadowDy="5"
+            android:shadowRadius="18"
+            android:letterSpacing="0.04"
+            android:layout_marginTop="22dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -45,10 +45,11 @@
             android:text="Encuentra el nombre perfecto para bebés y mascotas"
             android:textSize="11sp"
             android:textColor="#EEFFFFFF"
-            android:fontFamily="sans-serif"
+            android:fontFamily="sans-serif-light"
             android:textStyle="italic"
             android:gravity="center"
-            android:layout_marginTop="2dp"
+            android:letterSpacing="0.05"
+            android:layout_marginTop="1dp"
             app:layout_constraintTop_toBottomOf="@id/tvTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -74,56 +75,43 @@
                 android:scaleType="fitXY"
                 android:contentDescription="@null" />
 
-            <!-- LinearLayout que usa layout_weight para distribuir todo el alto -->
+            <!-- LinearLayout con Space+weight para distribuir como justify-content:space-evenly -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center_horizontal"
-                android:paddingTop="36dp"
-                android:paddingBottom="28dp"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp">
+                android:paddingTop="40dp"
+                android:paddingBottom="22dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
 
-                <!-- ESPACIO arriba flexible -->
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+                <!-- ESPACIO top -->
+                <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
 
-                <!-- "Seleccionar género" -->
+                <!-- "Seleccionar género" — Fredoka One como en la web -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="✨ Seleccionar género ✨"
-                    android:textSize="20sp"
-                    android:fontFamily="sans-serif-condensed"
-                    android:textStyle="bold"
+                    android:textSize="19sp"
+                    android:fontFamily="@font/fredoka_one"
                     android:textColor="#CC5500"
                     android:gravity="center" />
 
-                <!-- ESPACIO flexible -->
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+                <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
 
                 <!-- Bebés label -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="👶 Bebés"
-                    android:textSize="19sp"
-                    android:fontFamily="sans-serif-condensed"
-                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/fredoka_one"
                     android:textColor="#0077BB"
                     android:gravity="center" />
 
-                <!-- ESPACIO flexible -->
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+                <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
 
                 <!-- Bebés botones -->
                 <RadioGroup
@@ -146,28 +134,19 @@
 
                 </RadioGroup>
 
-                <!-- ESPACIO flexible -->
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+                <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
 
                 <!-- Mascotas label -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="🐾 Mascotas"
-                    android:textSize="19sp"
-                    android:fontFamily="sans-serif-condensed"
-                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/fredoka_one"
                     android:textColor="#0077BB"
                     android:gravity="center" />
 
-                <!-- ESPACIO flexible -->
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+                <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
 
                 <!-- Mascotas botones -->
                 <RadioGroup
@@ -181,19 +160,19 @@
                         android:id="@+id/rbPerro"
                         style="@style/GeneroButton"
                         android:text="Perro"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="7dp" />
 
                     <RadioButton
                         android:id="@+id/rbPerra"
                         style="@style/GeneroButton"
                         android:text="Perra"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="7dp" />
 
                     <RadioButton
                         android:id="@+id/rbGato"
                         style="@style/GeneroButton"
                         android:text="Gato"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="7dp" />
 
                     <RadioButton
                         android:id="@+id/rbGata"
@@ -202,30 +181,22 @@
 
                 </RadioGroup>
 
-                <!-- ESPACIO flexible (doble para dar más aire antes del botón) -->
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="2" />
+                <!-- Doble espacio antes del botón -->
+                <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="2"/>
 
-                <!-- Botón Siguiente: ancho completo -->
+                <!-- Botón Siguiente -->
                 <Button
                     android:id="@+id/btnSiguiente"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:text="➤  Siguiente"
                     android:textSize="18sp"
-                    android:fontFamily="sans-serif-condensed"
-                    android:textStyle="bold"
+                    android:fontFamily="@font/fredoka_one"
                     android:textColor="#FFFFFF"
                     android:background="@drawable/btn_gradient"
                     android:stateListAnimator="@null" />
 
-                <!-- ESPACIO flexible -->
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+                <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
 
                 <!-- Dots + PASO -->
                 <LinearLayout
@@ -251,16 +222,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="PASO 1 DE 2"
-                    android:textSize="10sp"
+                    android:textSize="9sp"
                     android:textColor="#888888"
                     android:letterSpacing="0.15"
-                    android:layout_marginTop="4dp" />
+                    android:layout_marginTop="3dp" />
 
-                <!-- ESPACIO abajo flexible -->
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+                <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
 
             </LinearLayout>
         </FrameLayout>
