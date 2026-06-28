@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -21,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,14 +86,14 @@ public class ResultadosActivity extends AppCompatActivity {
         setContentView(R.layout.activity_resultados);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.rootResultados), (v, insets) -> {
-            var sb = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            androidx.core.graphics.Insets sb = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(sb.left, sb.top, sb.right, sb.bottom);
             return insets;
         });
 
         tipo = getIntent().getStringExtra("tipo");
         nombres = new ArrayList<>(NOMBRES.getOrDefault(tipo, Arrays.asList("Sin nombres")));
-        java.util.Collections.shuffle(nombres, new Random());
+        Collections.shuffle(nombres, new Random());
 
         initViews();
         setupBackNavigation();
@@ -112,12 +112,10 @@ public class ResultadosActivity extends AppCompatActivity {
         btnRandom   = findViewById(R.id.btnRandom);
         btnVolver   = findViewById(R.id.btnVolver);
 
-        String emoji = getEmojiForTipo(tipo);
-        tvTipo.setText(emoji + " " + tipo);
+        tvTipo.setText(getEmojiForTipo(tipo) + "  " + tipo);
     }
 
     private void setupBackNavigation() {
-        // Modern back press handling — replaces deprecated onBackPressed()
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -132,15 +130,11 @@ public class ResultadosActivity extends AppCompatActivity {
     }
 
     private String getEmojiForTipo(String t) {
-        return switch (t) {
-            case "Niño"  -> "👶";
-            case "Niña"  -> "👶";
-            case "Perro" -> "🐶";
-            case "Perra" -> "🐶";
-            case "Gato"  -> "🐱";
-            case "Gata"  -> "🐱";
-            default      -> "✨";
-        };
+        if (t == null) return "✨";
+        if (t.equals("Niño") || t.equals("Niña"))   return "👶";
+        if (t.equals("Perro") || t.equals("Perra")) return "🐶";
+        if (t.equals("Gato") || t.equals("Gata"))   return "🐱";
+        return "✨";
     }
 
     private void setupClicks() {
@@ -159,6 +153,14 @@ public class ResultadosActivity extends AppCompatActivity {
         });
 
         btnRandom.setOnClickListener(v -> {
+            // Animación de rebote al botón
+            v.animate().scaleX(0.85f).scaleY(0.85f).setDuration(80)
+                .withEndAction(() ->
+                    v.animate().scaleX(1f).scaleY(1f)
+                        .setDuration(300)
+                        .setInterpolator(new OvershootInterpolator(2.5f)).start())
+                .start();
+
             int prev = currentIndex;
             while (currentIndex == prev && nombres.size() > 1) {
                 currentIndex = new Random().nextInt(nombres.size());
@@ -178,48 +180,53 @@ public class ResultadosActivity extends AppCompatActivity {
         btnSiguiente.setAlpha(currentIndex < nombres.size() - 1 ? 1f : 0.4f);
     }
 
+    // ── Swipe card: sale por un lado y entra por el otro ─────────────────────
     private void animateCardSwipe(boolean goRight) {
-        float outX = goRight ? -800f : 800f;
-        float inX  = goRight ?  800f : -800f;
+        float outX = goRight ? -900f : 900f;
+        float inX  = goRight ?  900f : -900f;
 
-        ObjectAnimator out = ObjectAnimator.ofFloat(cardNombre, "translationX", 0f, outX);
-        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(cardNombre, "alpha", 1f, 0f);
-        AnimatorSet animOut = new AnimatorSet();
+        ObjectAnimator out    = ObjectAnimator.ofFloat(cardNombre, "translationX", 0f, outX);
+        ObjectAnimator fadeOut= ObjectAnimator.ofFloat(cardNombre, "alpha", 1f, 0f);
+        AnimatorSet animOut   = new AnimatorSet();
         animOut.playTogether(out, fadeOut);
-        animOut.setDuration(180);
+        animOut.setDuration(160);
         animOut.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 displayNombre();
                 cardNombre.setTranslationX(inX);
                 cardNombre.setAlpha(0f);
-                ObjectAnimator in = ObjectAnimator.ofFloat(cardNombre, "translationX", inX, 0f);
-                ObjectAnimator fadeIn = ObjectAnimator.ofFloat(cardNombre, "alpha", 0f, 1f);
-                AnimatorSet animIn = new AnimatorSet();
+
+                ObjectAnimator in    = ObjectAnimator.ofFloat(cardNombre, "translationX", inX, 0f);
+                ObjectAnimator fadeIn= ObjectAnimator.ofFloat(cardNombre, "alpha", 0f, 1f);
+                AnimatorSet animIn   = new AnimatorSet();
                 animIn.playTogether(in, fadeIn);
-                animIn.setDuration(250);
-                animIn.setInterpolator(new OvershootInterpolator(1.2f));
+                animIn.setDuration(240);
+                animIn.setInterpolator(new OvershootInterpolator(1.3f));
                 animIn.start();
             }
         });
         animOut.start();
     }
 
+    // ── Entrada: card sube con rebote + flotación infinita ───────────────────
     private void entranceAnim() {
         cardNombre.setAlpha(0f);
-        cardNombre.setTranslationY(40f);
+        cardNombre.setTranslationY(50f);
         cardNombre.animate()
             .alpha(1f).translationY(0f)
             .setDuration(600).setStartDelay(200)
-            .setInterpolator(new OvershootInterpolator(1.3f))
+            .setInterpolator(new OvershootInterpolator(1.4f))
+            .withEndAction(this::startFloating)
             .start();
+    }
 
-        // Floating loop
-        ObjectAnimator floatY = ObjectAnimator.ofFloat(cardNombre, "translationY", 0f, 5f, 0f);
+    private void startFloating() {
+        ObjectAnimator floatY = ObjectAnimator.ofFloat(cardNombre, "translationY", 0f, 6f, 0f);
         floatY.setDuration(3500);
         floatY.setRepeatCount(ValueAnimator.INFINITE);
+        floatY.setRepeatMode(ValueAnimator.REVERSE);
         floatY.setInterpolator(new AccelerateDecelerateInterpolator());
-        floatY.setStartDelay(900);
         floatY.start();
     }
 }

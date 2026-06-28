@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <!-- gradient: #ff9f43 → #ff7eb3 → #ffca6e igual que la web -->
     <gradient
-        android:startColor="#ff9f43"
-        android:centerColor="#ff7eb3"
-        android:endColor="#ffca6e"
-        android:angle="135"
-        android:type="linear" />
+        android:startColor="#FF9F43"
+        android:centerColor="#FF7EB3"
+        android:endColor="#FFCA6E"
+        android:angle="135" />
     <corners android:radius="50dp" />
 </shape>

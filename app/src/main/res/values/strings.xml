@@ -5,8 +5,10 @@
     <string name="seleccionar_genero">✨ Seleccionar género ✨</string>
     <string name="bebes">👶 Bebés</string>
     <string name="mascotas">🐾 Mascotas</string>
-    <string name="btn_siguiente">➤ Siguiente</string>
-    <string name="btn_anterior">◀ Anterior</string>
+    <string name="btn_siguiente">➤  Siguiente</string>
+    <string name="btn_anterior">◀  Anterior</string>
     <string name="btn_random">🎲</string>
-    <string name="volver">Volver</string>
+    <string name="footer_text">Miles de nombres de bebés y mascotas</string>
+    <string name="paso_label">PASO %1$d DE %2$d</string>
+    <string name="selecciona_opcion">Selecciona una opción ✨</string>
 </resources>

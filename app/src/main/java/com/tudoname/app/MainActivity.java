@@ -33,8 +33,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Edge-to-edge
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            var bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            androidx.core.graphics.Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
             return insets;
         });
@@ -46,12 +47,11 @@ public class MainActivity extends AppCompatActivity {
         rgMascotas   = findViewById(R.id.rgMascotas);
         btnSiguiente = findViewById(R.id.btnSiguiente);
 
-        // Ocultar todo antes de animar
+        // Ocultar antes de animar
         tvTitle.setAlpha(0f);
         tvTagline.setAlpha(0f);
         cardContent.setAlpha(0f);
 
-        // Esperar layout completo, luego animar
         cardContent.post(() -> {
             cardContent.setPivotX(cardContent.getWidth() / 2f);
             cardContent.setPivotY(0f);
@@ -63,22 +63,22 @@ public class MainActivity extends AppCompatActivity {
         setupButton();
     }
 
+    // ── Animación título: popIn + shimmer loop ──────────────────────────────
     private void animarTitulo() {
-        // Título: aparece con rebote desde arriba
         tvTitle.setTranslationY(-30f);
-        tvTitle.setScaleX(0.75f);
-        tvTitle.setScaleY(0.75f);
+        tvTitle.setScaleX(0.7f);
+        tvTitle.setScaleY(0.7f);
         tvTitle.animate()
             .alpha(1f)
             .translationY(0f)
             .scaleX(1f)
             .scaleY(1f)
-            .setDuration(650)
+            .setDuration(600)
             .setInterpolator(new OvershootInterpolator(1.8f))
             .withEndAction(() -> {
-                // Shimmer infinito: pulso de opacidad
-                ObjectAnimator shimmer = ObjectAnimator.ofFloat(tvTitle, "alpha", 1f, 0.80f, 1f);
-                shimmer.setDuration(2500);
+                // Shimmer: pulso de opacidad infinito
+                ObjectAnimator shimmer = ObjectAnimator.ofFloat(tvTitle, "alpha", 1f, 0.78f, 1f);
+                shimmer.setDuration(2800);
                 shimmer.setRepeatCount(ValueAnimator.INFINITE);
                 shimmer.setRepeatMode(ValueAnimator.RESTART);
                 shimmer.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -92,15 +92,15 @@ public class MainActivity extends AppCompatActivity {
             .alpha(1f)
             .translationY(0f)
             .setDuration(600)
-            .setStartDelay(400)
+            .setStartDelay(450)
             .setInterpolator(new DecelerateInterpolator(1.5f))
             .start();
     }
 
+    // ── Animación hoja: entrada rotada + balanceo colgante infinito ──────────
     private void animarHoja() {
-        // Hoja entra desde arriba rotada
-        cardContent.setTranslationY(-50f);
-        cardContent.setRotation(-8f);
+        cardContent.setTranslationY(-40f);
+        cardContent.setRotation(-6f);
         cardContent.setScaleX(0.88f);
         cardContent.setScaleY(0.88f);
 
@@ -110,11 +110,10 @@ public class MainActivity extends AppCompatActivity {
             .rotation(0f)
             .scaleX(1f)
             .scaleY(1f)
-            .setDuration(750)
-            .setStartDelay(150)
-            .setInterpolator(new OvershootInterpolator(1.5f))
+            .setDuration(700)
+            .setStartDelay(200)
+            .setInterpolator(new OvershootInterpolator(1.4f))
             .withEndAction(() -> {
-                // Recalcular pivot y arrancar balanceo
                 cardContent.setPivotX(cardContent.getWidth() / 2f);
                 cardContent.setPivotY(0f);
                 arrancarBalanceo();
@@ -122,20 +121,18 @@ public class MainActivity extends AppCompatActivity {
             })
             .start();
 
-        // Contenido interno aparece escalonado
-        new Handler(Looper.getMainLooper()).postDelayed(() -> animarContenido(), 600);
+        new Handler(Looper.getMainLooper()).postDelayed(this::animarContenido, 650);
     }
 
+    // ── Balanceo continuo: papel colgado del chinche ─────────────────────────
     private void arrancarBalanceo() {
-        // Rotación: papel colgado de chinche (igual CSS hojaFlotando)
         ObjectAnimator rot = ObjectAnimator.ofFloat(cardContent, "rotation",
-            0f, 1.0f, -0.6f, 0.8f, -0.4f, 0f);
+            0f, 0.8f, -0.5f, 0.6f, -0.3f, 0f);
         rot.setDuration(5000);
         rot.setRepeatCount(ValueAnimator.INFINITE);
         rot.setRepeatMode(ValueAnimator.RESTART);
         rot.setInterpolator(new AccelerateDecelerateInterpolator());
 
-        // Flotado vertical suave
         ObjectAnimator transY = ObjectAnimator.ofFloat(cardContent, "translationY",
             0f, 3f, 1f, 2.5f, 0.5f, 0f);
         transY.setDuration(5000);
@@ -143,9 +140,8 @@ public class MainActivity extends AppCompatActivity {
         transY.setRepeatMode(ValueAnimator.RESTART);
         transY.setInterpolator(new AccelerateDecelerateInterpolator());
 
-        // Sombra oscilante
         ObjectAnimator elev = ObjectAnimator.ofFloat(cardContent, "elevation",
-            12f, 24f, 10f, 20f, 11f, 12f);
+            12f, 22f, 10f, 20f, 11f, 12f);
         elev.setDuration(5000);
         elev.setRepeatCount(ValueAnimator.INFINITE);
         elev.setRepeatMode(ValueAnimator.RESTART);
@@ -156,56 +152,71 @@ public class MainActivity extends AppCompatActivity {
         set.start();
     }
 
+    // ── Pulso botón Siguiente ─────────────────────────────────────────────────
     private void arrancarPulsBoton() {
         ObjectAnimator scaleX = ObjectAnimator.ofFloat(btnSiguiente, "scaleX", 1f, 1.04f, 1f);
         ObjectAnimator scaleY = ObjectAnimator.ofFloat(btnSiguiente, "scaleY", 1f, 1.04f, 1f);
-        ObjectAnimator elev   = ObjectAnimator.ofFloat(btnSiguiente, "elevation", 4f, 18f, 4f);
+        ObjectAnimator elev   = ObjectAnimator.ofFloat(btnSiguiente, "elevation", 8f, 20f, 8f);
         for (ObjectAnimator a : new ObjectAnimator[]{scaleX, scaleY, elev}) {
             a.setDuration(2000);
             a.setRepeatCount(ValueAnimator.INFINITE);
             a.setRepeatMode(ValueAnimator.RESTART);
             a.setInterpolator(new AccelerateDecelerateInterpolator());
         }
-        AnimatorSet btnSet = new AnimatorSet();
-        btnSet.playTogether(scaleX, scaleY, elev);
-        btnSet.start();
+        AnimatorSet pulso = new AnimatorSet();
+        pulso.playTogether(scaleX, scaleY, elev);
+        pulso.start();
     }
 
+    // ── Contenido de la hoja aparece escalonado ───────────────────────────────
     private void animarContenido() {
         int[] ids    = {R.id.rgBebes, R.id.rgMascotas, R.id.btnSiguiente};
-        int[] delays = {0, 120, 240};
+        int[] delays = {0, 100, 200};
         for (int i = 0; i < ids.length; i++) {
             android.view.View v = findViewById(ids[i]);
             if (v == null) continue;
             v.setAlpha(0f);
-            v.setTranslationY(30f);
+            v.setTranslationY(28f);
             v.animate()
                 .alpha(1f).translationY(0f)
-                .setDuration(500)
+                .setDuration(480)
                 .setStartDelay(delays[i])
                 .setInterpolator(new DecelerateInterpolator(1.5f))
                 .start();
         }
     }
 
+    // ── Radio groups mutuamente excluyentes + rebote al seleccionar ───────────
     private void setupRadioGroups() {
         rgBebes.setOnCheckedChangeListener((g, id) -> {
-            if (id != -1) { rgMascotas.clearCheck(); rebotarVista(findViewById(id)); }
+            if (id != -1) {
+                rgMascotas.clearCheck();
+                rebotarVista(findViewById(id));
+            }
         });
         rgMascotas.setOnCheckedChangeListener((g, id) -> {
-            if (id != -1) { rgBebes.clearCheck(); rebotarVista(findViewById(id)); }
+            if (id != -1) {
+                rgBebes.clearCheck();
+                rebotarVista(findViewById(id));
+            }
         });
     }
 
     private void rebotarVista(android.view.View v) {
         if (v == null) return;
-        v.animate().scaleX(1.10f).scaleY(1.10f).translationY(-6f)
-            .setDuration(180).setInterpolator(new OvershootInterpolator(2f)).start();
+        v.animate()
+            .scaleX(1.12f).scaleY(1.12f).translationY(-5f)
+            .setDuration(160).setInterpolator(new OvershootInterpolator(2.2f))
+            .withEndAction(() ->
+                v.animate().scaleX(1f).scaleY(1f).translationY(0f)
+                    .setDuration(200).setInterpolator(new OvershootInterpolator(1.5f)).start())
+            .start();
     }
 
+    // ── Botón Siguiente: press + navegar ─────────────────────────────────────
     private void setupButton() {
         btnSiguiente.setOnClickListener(v -> {
-            v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(80)
+            v.animate().scaleX(0.96f).scaleY(0.96f).setDuration(80)
                 .withEndAction(() ->
                     v.animate().scaleX(1f).scaleY(1f).setDuration(200)
                         .setInterpolator(new OvershootInterpolator(2.5f))
@@ -219,9 +230,10 @@ public class MainActivity extends AppCompatActivity {
         String tipo = getSeleccion();
         if (tipo == null) {
             Toast.makeText(this, "Selecciona una opción ✨", Toast.LENGTH_SHORT).show();
+            // Shake de la hoja
             ObjectAnimator shaker = ObjectAnimator.ofFloat(cardContent, "translationX",
-                0f, -18f, 18f, -12f, 12f, -6f, 6f, 0f);
-            shaker.setDuration(500);
+                0f, -16f, 16f, -10f, 10f, -5f, 5f, 0f);
+            shaker.setDuration(450);
             shaker.start();
             return;
         }
