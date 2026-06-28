@@ -53,18 +53,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- HOJA con tamaño FIJO centrada en pantalla -->
+        <!--
+            HOJA: tamaño basado en el cuadrado verde marcado por el usuario.
+            360dp ancho x 310dp alto, posicionada en el 60% vertical
+            (justo sobre los animales, debajo de los bebés)
+        -->
         <FrameLayout
             android:id="@+id/cardContent"
-            android:layout_width="300dp"
-            android:layout_height="340dp"
+            android:layout_width="360dp"
+            android:layout_height="310dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintVertical_bias="0.58">
+            app:layout_constraintVertical_bias="0.60">
 
-            <!-- Hoja como fondo del card -->
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -72,15 +75,14 @@
                 android:scaleType="fitXY"
                 android:contentDescription="@null" />
 
-            <!-- Contenido sobre la hoja -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center_horizontal"
-                android:paddingTop="22dp"
-                android:paddingBottom="14dp"
-                android:paddingHorizontal="14dp">
+                android:paddingTop="18dp"
+                android:paddingBottom="10dp"
+                android:paddingHorizontal="18dp">
 
                 <!-- "Seleccionar género" -->
                 <TextView
@@ -91,7 +93,7 @@
                     android:fontFamily="sans-serif-condensed"
                     android:textStyle="bold"
                     android:textColor="#CC5500"
-                    android:layout_marginBottom="6dp" />
+                    android:layout_marginBottom="4dp" />
 
                 <!-- Bebés -->
                 <TextView
@@ -102,7 +104,7 @@
                     android:fontFamily="sans-serif-condensed"
                     android:textStyle="bold"
                     android:textColor="#0077BB"
-                    android:layout_marginBottom="5dp" />
+                    android:layout_marginBottom="4dp" />
 
                 <RadioGroup
                     android:id="@+id/rgBebes"
@@ -110,7 +112,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="6dp">
 
                     <RadioButton
                         android:id="@+id/rbNino"
@@ -134,7 +136,7 @@
                     android:fontFamily="sans-serif-condensed"
                     android:textStyle="bold"
                     android:textColor="#0077BB"
-                    android:layout_marginBottom="5dp" />
+                    android:layout_marginBottom="4dp" />
 
                 <RadioGroup
                     android:id="@+id/rgMascotas"
@@ -172,24 +174,24 @@
                 <!-- Botón Siguiente -->
                 <Button
                     android:id="@+id/btnSiguiente"
-                    android:layout_width="180dp"
-                    android:layout_height="42dp"
+                    android:layout_width="200dp"
+                    android:layout_height="44dp"
                     android:text="➤  Siguiente"
-                    android:textSize="13sp"
+                    android:textSize="14sp"
                     android:fontFamily="sans-serif-condensed"
                     android:textStyle="bold"
                     android:textColor="#FFFFFF"
                     android:background="@drawable/btn_gradient"
                     android:stateListAnimator="@null"
-                    android:layout_marginTop="10dp" />
+                    android:layout_marginTop="8dp" />
 
-                <!-- Dots -->
+                <!-- Dots + PASO -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="7dp">
 
                     <View
                         android:layout_width="20dp"
