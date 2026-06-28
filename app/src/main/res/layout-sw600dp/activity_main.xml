@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/fondo"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#18003C50" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Logo GRANDE para tablet -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tudoname"
+            android:textSize="88sp"
+            android:fontFamily="sans-serif-condensed"
+            android:textStyle="bold"
+            android:textColor="#FFDF50"
+            android:shadowColor="#CC000000"
+            android:shadowDx="0"
+            android:shadowDy="5"
+            android:shadowRadius="22"
+            android:layout_marginTop="36dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <View
+            android:id="@+id/dividerTop"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@drawable/divider_line"
+            android:layout_marginTop="6dp"
+            android:layout_marginHorizontal="120dp"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tvTagline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Encuentra el nombre perfecto para bebés y mascotas"
+            android:textSize="20sp"
+            android:textColor="#EEFFFFFF"
+            android:fontFamily="serif"
+            android:textStyle="italic"
+            android:gravity="center"
+            android:shadowColor="#DD000000"
+            android:shadowDx="0"
+            android:shadowDy="1"
+            android:shadowRadius="8"
+            android:layout_marginTop="6dp"
+            android:layout_marginHorizontal="60dp"
+            app:layout_constraintTop_toBottomOf="@id/dividerTop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <View
+            android:id="@+id/dividerBottom"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@drawable/divider_line"
+            android:layout_marginTop="6dp"
+            android:layout_marginHorizontal="120dp"
+            app:layout_constraintTop_toBottomOf="@id/tvTagline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- HOJA tablet: más grande, llena la pantalla -->
+        <FrameLayout
+            android:id="@+id/cardContent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:elevation="12dp"
+            app:layout_constraintWidth_percent="0.72"
+            app:layout_constraintDimensionRatio="900:1020"
+            app:layout_constraintTop_toBottomOf="@id/dividerBottom"
+            app:layout_constraintBottom_toTopOf="@id/tvFooter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.48">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/hoja"
+                android:scaleType="fitXY"
+                android:contentDescription="@null" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:paddingTop="52dp"
+                android:paddingBottom="28dp"
+                android:paddingStart="36dp"
+                android:paddingEnd="36dp">
+
+                <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/tvSectionLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✨ Seleccionar género ✨"
+                    android:textSize="32sp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textStyle="bold"
+                    android:textColor="#E05A00"
+                    android:gravity="center" />
+
+                <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="👶 Bebés"
+                    android:textSize="28sp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textStyle="bold"
+                    android:textColor="#0077BB"
+                    android:gravity="center" />
+
+                <Space android:layout_width="0dp" android:layout_height="8dp"/>
+
+                <RadioGroup
+                    android:id="@+id/rgBebes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+                    <RadioButton
+                        android:id="@+id/rbNino"
+                        style="@style/GeneroButtonTablet"
+                        android:button="@null"
+                        android:text="Niño"
+                        android:layout_marginEnd="16dp" />
+                    <RadioButton
+                        android:id="@+id/rbNina"
+                        style="@style/GeneroButtonTablet"
+                        android:button="@null"
+                        android:text="Niña" />
+                </RadioGroup>
+
+                <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
+
+                <View
+                    android:layout_width="120dp"
+                    android:layout_height="1.5dp"
+                    android:background="#44FFFFFF" />
+
+                <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🐾 Mascotas"
+                    android:textSize="28sp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textStyle="bold"
+                    android:textColor="#0077BB"
+                    android:gravity="center" />
+
+                <Space android:layout_width="0dp" android:layout_height="8dp"/>
+
+                <RadioGroup
+                    android:id="@+id/rgMascotas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+                    <RadioButton
+                        android:id="@+id/rbPerro"
+                        style="@style/GeneroButtonTablet"
+                        android:button="@null"
+                        android:text="Perro"
+                        android:layout_marginEnd="10dp" />
+                    <RadioButton
+                        android:id="@+id/rbPerra"
+                        style="@style/GeneroButtonTablet"
+                        android:button="@null"
+                        android:text="Perra"
+                        android:layout_marginEnd="10dp" />
+                    <RadioButton
+                        android:id="@+id/rbGato"
+                        style="@style/GeneroButtonTablet"
+                        android:button="@null"
+                        android:text="Gato"
+                        android:layout_marginEnd="10dp" />
+                    <RadioButton
+                        android:id="@+id/rbGata"
+                        style="@style/GeneroButtonTablet"
+                        android:button="@null"
+                        android:text="Gata" />
+                </RadioGroup>
+
+                <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/btnSiguiente"
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:text="➤  SIGUIENTE"
+                    android:textSize="28sp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/btn_gradient"
+                    android:stateListAnimator="@null"
+                    android:elevation="8dp" />
+
+                <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+                    <View
+                        android:layout_width="36dp"
+                        android:layout_height="10dp"
+                        android:background="@drawable/dot_active"
+                        android:layout_marginEnd="8dp" />
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:background="@drawable/dot_inactive" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PASO 1 DE 2"
+                    android:textSize="14sp"
+                    android:textColor="#888888"
+                    android:letterSpacing="0.15"
+                    android:layout_marginTop="4dp" />
+
+                <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
+
+            </LinearLayout>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvFooter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Miles de nombres de bebés y mascotas"
+            android:textSize="16sp"
+            android:textColor="#AAD0FFFF"
+            android:fontFamily="sans-serif"
+            android:textStyle="bold"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

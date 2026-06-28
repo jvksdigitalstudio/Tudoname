@@ -25,4 +25,19 @@
         <item name="android:stateListAnimator">@null</item>
         <item name="android:button">@null</item>
     </style>
+    <!-- Botón pill glass TABLET -->
+    <style name="GeneroButtonTablet">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">64dp</item>
+        <item name="android:minWidth">130dp</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_dark</item>
+        <item name="android:background">@drawable/btn_genero_selector</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:button">@null</item>
+    </style>
 </resources>
