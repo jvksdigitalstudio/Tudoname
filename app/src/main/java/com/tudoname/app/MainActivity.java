@@ -166,7 +166,9 @@ public class MainActivity extends AppCompatActivity {
             a.setRepeatMode(ValueAnimator.RESTART);
             a.setInterpolator(new AccelerateDecelerateInterpolator());
         }
-        new AnimatorSet() {{ playTogether(scaleX, scaleY, elev); start(); }};
+        AnimatorSet btnSet = new AnimatorSet();
+        btnSet.playTogether(scaleX, scaleY, elev);
+        btnSet.start();
     }
 
     private void animarContenido() {
