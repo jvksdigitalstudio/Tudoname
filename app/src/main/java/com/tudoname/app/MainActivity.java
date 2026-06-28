@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
@@ -33,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Edge-to-edge
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             androidx.core.graphics.Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
@@ -47,25 +47,29 @@ public class MainActivity extends AppCompatActivity {
         rgMascotas   = findViewById(R.id.rgMascotas);
         btnSiguiente = findViewById(R.id.btnSiguiente);
 
-        // Ocultar antes de animar
+        // Ocultar todo antes de animar
         tvTitle.setAlpha(0f);
         tvTagline.setAlpha(0f);
         cardContent.setAlpha(0f);
 
-        cardContent.post(() -> {
-            cardContent.setPivotX(cardContent.getWidth() / 2f);
-            cardContent.setPivotY(0f);
-            animarTitulo();
-            animarHoja();
+        // Esperar a que el layout esté completamente medido
+        cardContent.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                cardContent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                cardContent.setPivotX(cardContent.getWidth() / 2f);
+                cardContent.setPivotY(0f);
+                animarTitulo();
+                animarHoja();
+            }
         });
 
         setupRadioGroups();
         setupButton();
     }
 
-    // ── Animación título: popIn + shimmer loop ──────────────────────────────
     private void animarTitulo() {
-        tvTitle.setTranslationY(-30f);
+        tvTitle.setTranslationY(-40f);
         tvTitle.setScaleX(0.7f);
         tvTitle.setScaleY(0.7f);
         tvTitle.animate()
@@ -73,11 +77,10 @@ public class MainActivity extends AppCompatActivity {
             .translationY(0f)
             .scaleX(1f)
             .scaleY(1f)
-            .setDuration(600)
+            .setDuration(650)
             .setInterpolator(new OvershootInterpolator(1.8f))
             .withEndAction(() -> {
-                // Shimmer: pulso de opacidad infinito
-                ObjectAnimator shimmer = ObjectAnimator.ofFloat(tvTitle, "alpha", 1f, 0.78f, 1f);
+                ObjectAnimator shimmer = ObjectAnimator.ofFloat(tvTitle, "alpha", 1f, 0.75f, 1f);
                 shimmer.setDuration(2800);
                 shimmer.setRepeatCount(ValueAnimator.INFINITE);
                 shimmer.setRepeatMode(ValueAnimator.RESTART);
@@ -86,23 +89,21 @@ public class MainActivity extends AppCompatActivity {
             })
             .start();
 
-        // Tagline: fadeUp con delay
-        tvTagline.setTranslationY(20f);
+        tvTagline.setTranslationY(24f);
         tvTagline.animate()
             .alpha(1f)
             .translationY(0f)
             .setDuration(600)
-            .setStartDelay(450)
+            .setStartDelay(500)
             .setInterpolator(new DecelerateInterpolator(1.5f))
             .start();
     }
 
-    // ── Animación hoja: entrada rotada + balanceo colgante infinito ──────────
     private void animarHoja() {
-        cardContent.setTranslationY(-40f);
-        cardContent.setRotation(-6f);
-        cardContent.setScaleX(0.88f);
-        cardContent.setScaleY(0.88f);
+        cardContent.setTranslationY(-50f);
+        cardContent.setRotation(-8f);
+        cardContent.setScaleX(0.85f);
+        cardContent.setScaleY(0.85f);
 
         cardContent.animate()
             .alpha(1f)
@@ -110,83 +111,69 @@ public class MainActivity extends AppCompatActivity {
             .rotation(0f)
             .scaleX(1f)
             .scaleY(1f)
-            .setDuration(700)
+            .setDuration(750)
             .setStartDelay(200)
-            .setInterpolator(new OvershootInterpolator(1.4f))
+            .setInterpolator(new OvershootInterpolator(1.6f))
             .withEndAction(() -> {
                 cardContent.setPivotX(cardContent.getWidth() / 2f);
                 cardContent.setPivotY(0f);
                 arrancarBalanceo();
-                arrancarPulsBoton();
+                arrancarPulsoBoton();
             })
             .start();
 
-        new Handler(Looper.getMainLooper()).postDelayed(this::animarContenido, 650);
+        new Handler(Looper.getMainLooper()).postDelayed(this::animarContenidoHoja, 700);
     }
 
-    // ── Balanceo continuo: papel colgado del chinche ─────────────────────────
     private void arrancarBalanceo() {
-        ObjectAnimator rot = ObjectAnimator.ofFloat(cardContent, "rotation",
-            0f, 0.8f, -0.5f, 0.6f, -0.3f, 0f);
-        rot.setDuration(5000);
+        ObjectAnimator rot = ObjectAnimator.ofFloat(cardContent, "rotation", 0f, 0.9f, -0.6f, 0.7f, -0.4f, 0f);
+        rot.setDuration(5500);
         rot.setRepeatCount(ValueAnimator.INFINITE);
         rot.setRepeatMode(ValueAnimator.RESTART);
         rot.setInterpolator(new AccelerateDecelerateInterpolator());
 
-        ObjectAnimator transY = ObjectAnimator.ofFloat(cardContent, "translationY",
-            0f, 3f, 1f, 2.5f, 0.5f, 0f);
-        transY.setDuration(5000);
+        ObjectAnimator transY = ObjectAnimator.ofFloat(cardContent, "translationY", 0f, 4f, 1f, 3f, 0.5f, 0f);
+        transY.setDuration(5500);
         transY.setRepeatCount(ValueAnimator.INFINITE);
         transY.setRepeatMode(ValueAnimator.RESTART);
         transY.setInterpolator(new AccelerateDecelerateInterpolator());
 
-        ObjectAnimator elev = ObjectAnimator.ofFloat(cardContent, "elevation",
-            12f, 22f, 10f, 20f, 11f, 12f);
-        elev.setDuration(5000);
-        elev.setRepeatCount(ValueAnimator.INFINITE);
-        elev.setRepeatMode(ValueAnimator.RESTART);
-        elev.setInterpolator(new AccelerateDecelerateInterpolator());
-
         AnimatorSet set = new AnimatorSet();
-        set.playTogether(rot, transY, elev);
+        set.playTogether(rot, transY);
         set.start();
     }
 
-    // ── Pulso botón Siguiente ─────────────────────────────────────────────────
-    private void arrancarPulsBoton() {
-        ObjectAnimator scaleX = ObjectAnimator.ofFloat(btnSiguiente, "scaleX", 1f, 1.04f, 1f);
-        ObjectAnimator scaleY = ObjectAnimator.ofFloat(btnSiguiente, "scaleY", 1f, 1.04f, 1f);
-        ObjectAnimator elev   = ObjectAnimator.ofFloat(btnSiguiente, "elevation", 8f, 20f, 8f);
-        for (ObjectAnimator a : new ObjectAnimator[]{scaleX, scaleY, elev}) {
-            a.setDuration(2000);
+    private void arrancarPulsoBoton() {
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(btnSiguiente, "scaleX", 1f, 1.05f, 1f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(btnSiguiente, "scaleY", 1f, 1.05f, 1f);
+        for (ObjectAnimator a : new ObjectAnimator[]{scaleX, scaleY}) {
+            a.setDuration(2200);
             a.setRepeatCount(ValueAnimator.INFINITE);
             a.setRepeatMode(ValueAnimator.RESTART);
             a.setInterpolator(new AccelerateDecelerateInterpolator());
         }
         AnimatorSet pulso = new AnimatorSet();
-        pulso.playTogether(scaleX, scaleY, elev);
+        pulso.playTogether(scaleX, scaleY);
         pulso.start();
     }
 
-    // ── Contenido de la hoja aparece escalonado ───────────────────────────────
-    private void animarContenido() {
-        int[] ids    = {R.id.rgBebes, R.id.rgMascotas, R.id.btnSiguiente};
-        int[] delays = {0, 100, 200};
+    private void animarContenidoHoja() {
+        int[] ids    = {R.id.tvSectionLabel, R.id.rgBebes, R.id.rgMascotas, R.id.btnSiguiente};
+        int[] delays = {0, 80, 160, 240};
         for (int i = 0; i < ids.length; i++) {
             android.view.View v = findViewById(ids[i]);
             if (v == null) continue;
             v.setAlpha(0f);
-            v.setTranslationY(28f);
+            v.setTranslationY(30f);
             v.animate()
                 .alpha(1f).translationY(0f)
-                .setDuration(480)
+                .setDuration(500)
                 .setStartDelay(delays[i])
                 .setInterpolator(new DecelerateInterpolator(1.5f))
                 .start();
         }
     }
 
-    // ── Radio groups mutuamente excluyentes + rebote al seleccionar ───────────
     private void setupRadioGroups() {
         rgBebes.setOnCheckedChangeListener((g, id) -> {
             if (id != -1) {
@@ -205,20 +192,19 @@ public class MainActivity extends AppCompatActivity {
     private void rebotarVista(android.view.View v) {
         if (v == null) return;
         v.animate()
-            .scaleX(1.12f).scaleY(1.12f).translationY(-5f)
-            .setDuration(160).setInterpolator(new OvershootInterpolator(2.2f))
+            .scaleX(1.15f).scaleY(1.15f).translationY(-6f)
+            .setDuration(150).setInterpolator(new OvershootInterpolator(2.5f))
             .withEndAction(() ->
                 v.animate().scaleX(1f).scaleY(1f).translationY(0f)
-                    .setDuration(200).setInterpolator(new OvershootInterpolator(1.5f)).start())
+                    .setDuration(220).setInterpolator(new OvershootInterpolator(2f)).start())
             .start();
     }
 
-    // ── Botón Siguiente: press + navegar ─────────────────────────────────────
     private void setupButton() {
         btnSiguiente.setOnClickListener(v -> {
-            v.animate().scaleX(0.96f).scaleY(0.96f).setDuration(80)
+            v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(80)
                 .withEndAction(() ->
-                    v.animate().scaleX(1f).scaleY(1f).setDuration(200)
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(220)
                         .setInterpolator(new OvershootInterpolator(2.5f))
                         .withEndAction(this::irAResultados)
                         .start())
@@ -230,10 +216,9 @@ public class MainActivity extends AppCompatActivity {
         String tipo = getSeleccion();
         if (tipo == null) {
             Toast.makeText(this, "Selecciona una opción ✨", Toast.LENGTH_SHORT).show();
-            // Shake de la hoja
             ObjectAnimator shaker = ObjectAnimator.ofFloat(cardContent, "translationX",
-                0f, -16f, 16f, -10f, 10f, -5f, 5f, 0f);
-            shaker.setDuration(450);
+                0f, -18f, 18f, -12f, 12f, -6f, 6f, 0f);
+            shaker.setDuration(480);
             shaker.start();
             return;
         }
