@@ -1,38 +1,42 @@
 package com.tudoname.app;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
     private RadioGroup rgBebés, rgMascotas;
-    private CardView cardContent;
+    private FrameLayout cardContent;   // ahora FrameLayout, no CardView
     private TextView tvTitle, tvTagline;
     private Button btnSiguiente;
+
+    // Animadores del balanceo — guardados para cancelarlos si es necesario
+    private ObjectAnimator swingRotation;
+    private ObjectAnimator swingTranslation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Edge-to-edge
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             var systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -52,10 +56,16 @@ public class MainActivity extends AppCompatActivity {
         rgBebés      = findViewById(R.id.rgBebes);
         rgMascotas   = findViewById(R.id.rgMascotas);
         btnSiguiente = findViewById(R.id.btnSiguiente);
+
+        // Pivot en la parte superior centro — como papel colgado de un chinche
+        cardContent.post(() -> {
+            cardContent.setPivotX(cardContent.getWidth() / 2f);
+            cardContent.setPivotY(0f);
+        });
     }
 
     private void startEntranceAnimations() {
-        // Title pop-in
+        // ── Título: pop-in desde arriba con rebote ──
         tvTitle.setAlpha(0f);
         tvTitle.setScaleX(0.7f);
         tvTitle.setScaleY(0.7f);
@@ -71,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         titleAnim.setInterpolator(new OvershootInterpolator(1.2f));
         titleAnim.start();
 
-        // Tagline fade up (delayed)
+        // ── Tagline: fade-up suave ──
         tvTagline.setAlpha(0f);
         tvTagline.setTranslationY(20f);
         tvTagline.animate()
@@ -80,57 +90,80 @@ public class MainActivity extends AppCompatActivity {
             .setInterpolator(new AccelerateDecelerateInterpolator())
             .start();
 
-        // Card entrance from top with bounce
+        // ── Hoja: entrada desde arriba con rotación y rebote (igual que web) ──
         cardContent.setAlpha(0f);
-        cardContent.setTranslationY(-40f);
-        cardContent.setRotation(-4f);
+        cardContent.setTranslationY(-30f);
+        cardContent.setRotation(-6f);
         cardContent.setScaleX(0.92f);
         cardContent.setScaleY(0.92f);
 
-        AnimatorSet cardAnim = new AnimatorSet();
-        cardAnim.playTogether(
-            ObjectAnimator.ofFloat(cardContent, "alpha", 0f, 1f).setDuration(600),
-            ObjectAnimator.ofFloat(cardContent, "translationY", -40f, 0f).setDuration(600),
-            ObjectAnimator.ofFloat(cardContent, "rotation", -4f, 0f).setDuration(600),
-            ObjectAnimator.ofFloat(cardContent, "scaleX", 0.92f, 1f).setDuration(600),
-            ObjectAnimator.ofFloat(cardContent, "scaleY", 0.92f, 1f).setDuration(600)
+        AnimatorSet hojaEntrada = new AnimatorSet();
+        hojaEntrada.playTogether(
+            ObjectAnimator.ofFloat(cardContent, "alpha", 0f, 1f).setDuration(700),
+            ObjectAnimator.ofFloat(cardContent, "translationY", -30f, 0f).setDuration(700),
+            ObjectAnimator.ofFloat(cardContent, "rotation", -6f, 0f).setDuration(700),
+            ObjectAnimator.ofFloat(cardContent, "scaleX", 0.92f, 1f).setDuration(700),
+            ObjectAnimator.ofFloat(cardContent, "scaleY", 0.92f, 1f).setDuration(700)
         );
-        cardAnim.setStartDelay(200);
-        cardAnim.setInterpolator(new OvershootInterpolator(1.4f));
-        cardAnim.start();
-
-        // Subtle floating animation loop
-        startFloatingAnimation();
+        hojaEntrada.setStartDelay(200);
+        hojaEntrada.setInterpolator(new OvershootInterpolator(1.5f));
+        hojaEntrada.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // Inicia el balanceo continuo DESPUÉS de que termina la entrada
+                startHojaFlotando();
+            }
+        });
+        hojaEntrada.start();
     }
 
-    private void startFloatingAnimation() {
-        ObjectAnimator floatY = ObjectAnimator.ofFloat(cardContent, "translationY", 0f, 6f, 0f);
-        floatY.setDuration(4000);
-        floatY.setRepeatCount(ValueAnimator.INFINITE);
-        floatY.setInterpolator(new AccelerateDecelerateInterpolator());
-        floatY.setStartDelay(800);
-        floatY.start();
+    /**
+     * Replica el keyframe hojaFlotando de la web:
+     *   0%   rotate(0)     translateY(0)
+     *   20%  rotate(0.8)   translateY(1)
+     *   40%  rotate(-0.5)  translateY(0.5)
+     *   60%  rotate(0.6)   translateY(1)
+     *   80%  rotate(-0.4)  translateY(0)
+     *   100% rotate(0)     translateY(0)
+     * Duración: 5000ms  |  Infinito
+     */
+    private void startHojaFlotando() {
+        // Rotación — simula balanceo de papel colgado del chinche
+        swingRotation = ObjectAnimator.ofFloat(
+            cardContent, "rotation",
+            0f, 0.8f, -0.5f, 0.6f, -0.4f, 0f
+        );
+        swingRotation.setDuration(5000);
+        swingRotation.setRepeatCount(ValueAnimator.INFINITE);
+        swingRotation.setRepeatMode(ValueAnimator.RESTART);
+        swingRotation.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        // Traslación vertical suave
+        swingTranslation = ObjectAnimator.ofFloat(
+            cardContent, "translationY",
+            0f, 1f, 0.5f, 1f, 0f, 0f
+        );
+        swingTranslation.setDuration(5000);
+        swingTranslation.setRepeatCount(ValueAnimator.INFINITE);
+        swingTranslation.setRepeatMode(ValueAnimator.RESTART);
+        swingTranslation.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        AnimatorSet floatSet = new AnimatorSet();
+        floatSet.playTogether(swingRotation, swingTranslation);
+        floatSet.start();
     }
 
     private void setupRadioGroups() {
-        // Bebes group clears mascotas selection when something is selected
         rgBebés.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId != -1) {
-                rgMascotas.clearCheck();
-            }
+            if (checkedId != -1) rgMascotas.clearCheck();
         });
-
-        // Mascotas group clears bebes selection when something is selected
         rgMascotas.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId != -1) {
-                rgBebés.clearCheck();
-            }
+            if (checkedId != -1) rgBebés.clearCheck();
         });
     }
 
     private void setupButton() {
         btnSiguiente.setOnClickListener(v -> {
-            // Bounce animation on tap
             v.animate().scaleX(0.94f).scaleY(0.94f).setDuration(80)
                 .withEndAction(() ->
                     v.animate().scaleX(1f).scaleY(1f).setDuration(150)
@@ -144,9 +177,11 @@ public class MainActivity extends AppCompatActivity {
         String tipo = getSeleccion();
         if (tipo == null) {
             Toast.makeText(this, "Por favor selecciona una opción ✨", Toast.LENGTH_SHORT).show();
-            // Shake card
-            ObjectAnimator shaker = ObjectAnimator.ofFloat(cardContent, "translationX",
-                0f, -12f, 12f, -8f, 8f, -4f, 4f, 0f);
+            // Shake shake
+            ObjectAnimator shaker = ObjectAnimator.ofFloat(
+                cardContent, "translationX",
+                0f, -12f, 12f, -8f, 8f, -4f, 4f, 0f
+            );
             shaker.setDuration(400);
             shaker.start();
             return;
@@ -154,8 +189,6 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, ResultadosActivity.class);
         intent.putExtra("tipo", tipo);
-
-        // Slide transition
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
@@ -172,5 +205,12 @@ public class MainActivity extends AppCompatActivity {
             return rb.getText().toString();
         }
         return null;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (swingRotation != null) swingRotation.cancel();
+        if (swingTranslation != null) swingTranslation.cancel();
     }
 }
