@@ -61,8 +61,10 @@
         <FrameLayout
             android:id="@+id/cardContent"
             android:layout_width="0dp"
-            android:layout_height="370dp"
-            app:layout_constraintWidth_percent="0.75"
+            android:layout_height="0dp"
+            android:elevation="12dp"
+            app:layout_constraintWidth_percent="0.78"
+            app:layout_constraintDimensionRatio="900:1008"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
