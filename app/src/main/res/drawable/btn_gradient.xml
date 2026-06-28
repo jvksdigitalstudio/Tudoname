@@ -2,12 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <gradient
-                android:type="linear"
-                android:angle="135"
-                android:startColor="#E07000"
-                android:centerColor="#CC5588"
-                android:endColor="#CC9900" />
+            <solid android:color="#D4507A" />
             <corners android:radius="50dp" />
         </shape>
     </item>
@@ -16,13 +11,10 @@
             <gradient
                 android:type="linear"
                 android:angle="135"
-                android:startColor="#FF9F43"
-                android:centerColor="#FF7EB3"
-                android:endColor="#FFCA6E" />
+                android:startColor="#FF8FAB"
+                android:centerColor="#FF6B9D"
+                android:endColor="#E8558A" />
             <corners android:radius="50dp" />
-            <padding
-                android:top="4dp"
-                android:bottom="4dp" />
         </shape>
     </item>
 </selector>
